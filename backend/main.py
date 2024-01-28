@@ -29,8 +29,13 @@ app.add_middleware(
 def hello():
     return {'data': 'hello'}
 
+@app.get('/set')
+def set():
+    reset_messages()
+    return {'message': 'conversation reset'}
 
-@app.get('/health')
+
+@app.get('/reset')
 def reset_conversation():
     reset_messages()
     return {'message': 'conversation reset'}
