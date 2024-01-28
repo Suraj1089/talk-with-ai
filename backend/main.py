@@ -41,41 +41,26 @@ def reset_conversation():
     return {'message': 'conversation reset'}
 
 
-# @app.post('/post-audio')
-# async def post_audio(file: UploadFile = File(...)):
-#     print(file)
-
-
-@app.post('/post-audio')
+@app.post("/post-audio/")
 async def post_audio(file: UploadFile = File(...)):
-    # get saved audio
-
-    # save file from frontend
-
-    message_decoded = None
     with open(file.filename, "wb") as buffer:
         buffer.write(file.file.read())
     audio_input = open(file.filename, "rb")
     message_decoded = convert_audio_to_text(audio_input)
 
-    if message_decoded is None:
-        raise HTTPException(
-            status_code=400, detail="Unable to hear. Try again")
-    
-    chat_response = get_chat_response(message_input=message_decoded)
-
-    if not chat_response:
-        raise HTTPException(status_code=400, detail="Error in chat response")
+    if not message_decoded:
+        raise HTTPException(status_code=400, detail="Failed to decode audio")
+    chat_response = get_chat_response(message_decoded)
 
     store_messages(message_decoded, chat_response)
 
-    # return "messages stored"
+    if not chat_response:
+        raise HTTPException(status_code=400, detail="Failed chat response")
     audio_output = convert_text_to_speech(chat_response)
 
     if not audio_output:
-        raise HTTPException(status_code=400, detail="Error in audio decode")
-    # create a generator that yields chunks of data
+        raise HTTPException(status_code=400, detail="Failed audio output")
     def iterfile():
         yield audio_output
 
-    return StreamingResponse(iterfile(), media_type='application/octet-stream')
+    return StreamingResponse(iterfile(), media_type="application/octet-stream")
