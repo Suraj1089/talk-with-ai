@@ -1,9 +1,16 @@
+import logging
+from logging.config import dictConfig
+
+from app.internal.config import LogConfig
 from app.utils.database import reset_messages, store_messages
 from app.utils.openai_requests import convert_audio_to_text, get_chat_response
 from app.utils.text_to_speech import convert_text_to_speech
 from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
+
+dictConfig(LogConfig().model_dump())
+logger = logging.getLogger("mycoolapp")
 
 app = FastAPI()
 
@@ -22,6 +29,12 @@ app.add_middleware(
     allow_methods=['*'],
     allow_headers=['*']
 )
+
+
+@app.get('/')
+def home():
+    logger.info("This is home")
+    return {"data": "Hello fastapi"}
 
 
 @app.get('/health')

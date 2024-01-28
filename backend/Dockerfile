@@ -34,4 +34,4 @@ ENV EMAILS_FROM_EMAIL=$EMAILS_FROM_EMAIL
 ENV WEBSITE_DOMAIN=$WEBSITE_DOMAIN
 
 
-ENTRYPOINT ["/app/entrypoint.sh"]
+CMD [ "uvicorn","app.main:app" ]
