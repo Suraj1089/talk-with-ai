@@ -1,10 +1,10 @@
-import openai
-from fastapi import Depends, FastAPI, File, HTTPException, UploadFile
+from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
-from functions.database import reset_messages, store_messages
-from functions.openai_requests import convert_audio_to_text, get_chat_response
-from functions.text_to_speech import convert_text_to_speech
+
+from backend.app.utils.database import reset_messages, store_messages
+from backend.app.utils.openai_requests import convert_audio_to_text, get_chat_response
+from backend.app.utils.text_to_speech import convert_text_to_speech
 
 app = FastAPI()
 
@@ -28,6 +28,7 @@ app.add_middleware(
 @app.get('/health')
 def hello():
     return {'data': 'hello'}
+
 
 @app.get('/set')
 def set():
@@ -60,6 +61,7 @@ async def post_audio(file: UploadFile = File(...)):
 
     if not audio_output:
         raise HTTPException(status_code=400, detail="Failed audio output")
+
     def iterfile():
         yield audio_output
 
