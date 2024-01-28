@@ -1,10 +1,9 @@
 import openai
-from decouple import config
+from app.internal.config import get_settings
+from app.utils.database import get_recent_messages
 
-from backend.app.utils.database import get_recent_messages
-
-openai.organization = config("OPENAI_ORG")
-openai.api_key = config("OPENAI_API_KEY")
+openai.organization = get_settings().OPENAI_ORG
+openai.api_key = get_settings().OPENAI_API_KEY
 
 
 # Open AI - Whisper

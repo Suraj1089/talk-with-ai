@@ -1,10 +1,9 @@
+from app.utils.database import reset_messages, store_messages
+from app.utils.openai_requests import convert_audio_to_text, get_chat_response
+from app.utils.text_to_speech import convert_text_to_speech
 from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
-
-from backend.app.utils.database import reset_messages, store_messages
-from backend.app.utils.openai_requests import convert_audio_to_text, get_chat_response
-from backend.app.utils.text_to_speech import convert_text_to_speech
 
 app = FastAPI()
 
