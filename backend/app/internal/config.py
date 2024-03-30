@@ -7,6 +7,7 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 1
     PROJECT_NAME: str = 'fastapi-tutorials'
     DATABASE_URI: str
+    DATABASE_KEY: str
     WEBSITE_DOMAIN: str = 'http://localhost:8000'
     SECRET_KEY: str
     ALGORITHM: str

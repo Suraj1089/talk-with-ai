@@ -1,57 +1,14 @@
-import logging
-from logging.config import dictConfig
 
-from app.internal.config import LogConfig
-from app.utils.database import reset_messages, store_messages
-from app.utils.openai_requests import convert_audio_to_text, get_chat_response
-from app.utils.text_to_speech import convert_text_to_speech
-from fastapi import FastAPI, File, HTTPException, UploadFile
-from fastapi.middleware.cors import CORSMiddleware
+from fastapi import File, HTTPException, UploadFile
 from fastapi.responses import StreamingResponse
 
-dictConfig(LogConfig().model_dump())
-logger = logging.getLogger("mycoolapp")
+from app.apis import users
+from app.internal.server import app
+from app.utils.database import store_messages
+from app.utils.openai_requests import convert_audio_to_text, get_chat_response
+from app.utils.text_to_speech import convert_text_to_speech
 
-app = FastAPI()
-
-origins = [
-    "http://localhost:5173",
-    "http://localhost:5174",
-    "http://localhost:3000",
-    "http://localhost:4173",
-    "http://localhost:4174"
-]
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=['*'],
-    allow_headers=['*']
-)
-
-
-@app.get('/')
-def home():
-    logger.info("This is home")
-    return {"data": "Hello fastapi"}
-
-
-@app.get('/health')
-def hello():
-    return {'data': 'hello'}
-
-
-@app.get('/set')
-def set():
-    reset_messages()
-    return {'message': 'conversation reset'}
-
-
-@app.get('/reset')
-def reset_conversation():
-    reset_messages()
-    return {'message': 'conversation reset'}
+app.include_router(users.router)
 
 
 @app.post("/post-audio/")
