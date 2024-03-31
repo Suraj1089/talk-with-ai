@@ -11,7 +11,7 @@ from datetime import timedelta
 from fastapi import Depends
 from fastapi import HTTPException, status
 
-from backend.app.internal.config import Settings, get_settings
+from app.internal.config import Settings, get_settings
 
 router = APIRouter(prefix="/users", tags=["Users"])
 
@@ -47,26 +47,3 @@ def signup_user(new_user: UserCreate) -> UserResponse:
         updated_at=user.updated_at,
     )
     
-def authenticate_user():
-    return {}
-
-def create_access_token():
-    return {}
-
-@router.post("/token", response_model=TokenResponse)
-async def login_for_access_token(
-        form_data: OAuth2PasswordRequestForm = Depends(),
-        settings: Settings = Depends(get_settings)
-):
-    user = authenticate_user(form_data.username, form_data.password)
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-    access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = create_access_token(
-        user.email, expires_delta=access_token_expires
-    )
-    return {"access_token": access_token, "token_type": "bearer"}

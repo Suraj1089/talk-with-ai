@@ -2,13 +2,14 @@
 from fastapi import File, HTTPException, UploadFile
 from fastapi.responses import StreamingResponse
 
-from backend.app.apis.v1.routes import users
+from app.apis.v1.routes import users, auth
 from app.internal.server import app
 from app.utils.database import store_messages
 from app.utils.openai_requests import convert_audio_to_text, get_chat_response
 from app.utils.text_to_speech import convert_text_to_speech
 
 app.include_router(users.router)
+app.include_router(auth.router)
 
 
 @app.post("/post-audio/")

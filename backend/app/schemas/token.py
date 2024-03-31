@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 from typing import Optional
 
 from pydantic import BaseModel
@@ -43,6 +43,7 @@ class PasswordReset(BaseModel):
     password: str
     
 class TokenResponse(BaseModel):
-    access_token = str 
+    access_token: str 
+    refresh_token: str 
     token_type: str 
     expiry: datetime
