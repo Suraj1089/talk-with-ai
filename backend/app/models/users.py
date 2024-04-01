@@ -16,3 +16,11 @@ class User(SQLModel, table=True):
     updated_at: datetime = Field(
         default_factory=datetime.now,
     )
+    is_active: bool = Field(
+        default=True, description="User account status", nullable=True
+    )
+    is_superuser: bool = Field(default=False, nullable=True)
+    otp: bool = Field(
+        nullable=True,
+        description="To validate user using email or phone one time password",
+    )

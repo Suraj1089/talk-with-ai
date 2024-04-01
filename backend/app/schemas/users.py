@@ -10,13 +10,12 @@ class UserBase(BaseModel):
     email: EmailStr
     created_at: Optional[datetime]
     updated_at: Optional[datetime]
-    
+
 
 class UserCreate(UserBase):
     role: Optional[str] = "USER"
     password: str = Field(min_length=8)
-    
+
 
 class UserResponse(UserBase):
     id: int
-    

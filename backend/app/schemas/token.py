@@ -41,9 +41,10 @@ class TokenData(BaseModel):
 
 class PasswordReset(BaseModel):
     password: str
-    
+
+
 class TokenResponse(BaseModel):
-    access_token: str 
-    refresh_token: str 
-    token_type: str 
+    access_token: str
+    refresh_token: Optional[str]
+    token_type: str
     expiry: datetime

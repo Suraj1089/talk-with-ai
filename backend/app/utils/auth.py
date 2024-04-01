@@ -1,16 +1,14 @@
 from datetime import datetime, timedelta
-from typing import Annotated, Any, Union
+from typing import Any, Union
 
-from app.db.database import engine
-from app.internal.config import Settings, get_settings
+from app.internal.config import Settings
 from app.models.users import User
-from app.schemas.token import Token, TokenResponse, UserCreate, UserInDB
-from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.responses import JSONResponse
-from fastapi.security import OAuth2PasswordRequestForm
 from jose import jwt
-from pydantic import EmailStr
 from sqlmodel import Session, select
+from passlib.context import CryptContext
+
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 def create_access_token(
@@ -63,3 +61,11 @@ def authenticate_user(
     if user:
         return user
     return None
+
+
+def get_password_hash(password) -> str:
+    return pwd_context.hash(password)
+
+
+def verify_password(plain_password, hashed_password) -> bool:
+    return pwd_context.verify(plain_password, hashed_password)

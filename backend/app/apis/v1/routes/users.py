@@ -1,17 +1,10 @@
-
 from app.db.database import engine
 from app.models.users import User
 from app.schemas.users import UserCreate, UserResponse
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 from sqlmodel import Session, select
-from app.schemas.token import TokenResponse
-from fastapi.security import OAuth2PasswordRequestForm
-from datetime import timedelta
-from fastapi import Depends
-from fastapi import HTTPException, status
 
-from app.internal.config import Settings, get_settings
 
 router = APIRouter(prefix="/users", tags=["Users"])
 
@@ -26,7 +19,9 @@ def get_users():
 @router.post("/")
 def signup_user(new_user: UserCreate) -> UserResponse:
     with Session(engine) as session:
-        existing_user: User | None = session.exec(select(User).where(User.email == new_user.email)).first()
+        existing_user: User | None = session.exec(
+            select(User).where(User.email == new_user.email)
+        ).first()
         if existing_user:
             return JSONResponse(content="User Already exist", status_code=401)
         user = User(
@@ -46,4 +41,3 @@ def signup_user(new_user: UserCreate) -> UserResponse:
         created_at=user.created_at,
         updated_at=user.updated_at,
     )
-    
