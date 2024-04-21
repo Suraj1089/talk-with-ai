@@ -25,6 +25,8 @@ Follow these steps to set up and run the Voice Assistant Application locally:
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-username/voice-assistant.git
+   git clone https://github.com/Suraj1089/talk-with-ai.git
    ```
 
+
+<img width="1422" alt="image" src="https://github.com/Suraj1089/talk-with-ai/assets/85509795/934c79fc-08c9-489c-88be-0f8c63873b1a">
