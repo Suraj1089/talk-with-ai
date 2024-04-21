@@ -1,22 +1,25 @@
 from datetime import timedelta
 from typing import Annotated
 
+from app.apis.v1.deps import get_current_active_user, get_current_user
 from app.db.database import engine
 from app.internal.config import Settings, get_settings
 from app.models.users import User
 from app.schemas.token import TokenResponse, UserCreate, UserInDB
+from app.schemas.users import UserResponse
 from app.utils.auth import (
     authenticate_user,
     create_access_token,
     create_refresh_token,
-    get_user,
     get_password_hash,
+    get_user,
+    verify_refresh_token,
 )
 from app.utils.email_utils import (
+    generate_otp,
     send_email_otp,
     send_new_account_email,
     send_password_reset_email,
-    generate_otp,
 )
 from app.utils.users import create_user
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -24,9 +27,6 @@ from fastapi.responses import JSONResponse
 from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import EmailStr
 from sqlmodel import Session
-
-from backend.app.apis.v1.deps import get_current_user, get_current_active_user
-from backend.app.schemas.users import UserResponse
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -150,7 +150,7 @@ async def login_with_email_otp(email: EmailStr):
                 detail=f"User with email {email} not found",
                 status_code=status.HTTP_404_NOT_FOUND,
             )
-        otp = generate_otp()
+        otp: int = generate_otp()
         user.otp = otp
         session.commit()
         session.refresh(user)
@@ -180,3 +180,13 @@ async def validate_email_otp(email: EmailStr, otp: int):
             detail="Could not validate otp Try again",
             status_code=status.HTTP_401_UNAUTHORIZED,
         )
+
+
+@router.post('/refresh', status_code=status.HTTP_200_OK, response_model=TokenResponse)
+def get_access_token(settings: Annotated[Settings, Depends(get_settings)], refresh_token: str) -> JSONResponse | TokenResponse:
+    token_data = verify_refresh_token(settings=settings, token=refresh_token)
+    if not token_data:
+        return JSONResponse(content='Session expired', status_code=401)
+    acesss_token, expiry = create_access_token(settings=settings, subject=token_data)
+    return TokenResponse(access_token=acesss_token, expiry=expiry)
+    
