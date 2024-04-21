@@ -183,10 +183,10 @@ async def validate_email_otp(email: EmailStr, otp: int):
 
 
 @router.post('/refresh', status_code=status.HTTP_200_OK, response_model=TokenResponse)
-def get_access_token(settings: Annotated[Settings, Depends(get_settings)], refresh_token: str) -> JSONResponse | TokenResponse:
+def get_access_token(settings: Annotated[Settings, Depends(get_settings)],
+                     refresh_token: str) -> JSONResponse | TokenResponse:
     token_data = verify_refresh_token(settings=settings, token=refresh_token)
     if not token_data:
         return JSONResponse(content='Session expired', status_code=401)
     acesss_token, expiry = create_access_token(settings=settings, subject=token_data)
     return TokenResponse(access_token=acesss_token, expiry=expiry)
-    

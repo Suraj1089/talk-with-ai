@@ -45,6 +45,6 @@ class PasswordReset(BaseModel):
 
 class TokenResponse(BaseModel):
     access_token: str
-    refresh_token: str | None 
+    refresh_token: str | None
     token_type: str = "Bearer"
     expiry: datetime

@@ -56,7 +56,7 @@ def verify_refresh_token(settings: Settings, token: str) -> TokenData:
     credential_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"}        
+        headers={"WWW-Authenticate": "Bearer"}
     )
     try:
         payload: dict[str, Any] = jwt.decode(
@@ -68,8 +68,8 @@ def verify_refresh_token(settings: Settings, token: str) -> TokenData:
     except (JWTError, ValidationError):
         raise credential_exception
     return token_data
-        
-        
+
+
 def get_user(session: Session, username: str) -> Union[User, None]:
     existing_user: Union[User, None] = session.exec(
         select(User).where(User.email == username)
